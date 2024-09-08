@@ -268,7 +268,6 @@ const View = {
     },
 
     showStatusChangeModal() {
-        const newStatus = $("#setStatusBtn").text() === "Set Active" ? "Active" : "Inactive";
         const selectedCheckboxes = $(".rowCheckbox:checked");
         const selectedIds = selectedCheckboxes.map(function () {
             return $(this).data('id');
@@ -282,7 +281,7 @@ const View = {
     },
 
     async handleConfirmStatusChange() {
-        const newStatus = $("#statusChangeModalLabel").text().split(' ')[0] === "Set" ? "Active" : "Inactive";
+        const newStatus = $("#setStatusBtn").text() === "Set Active" ? "Active" : "Inactive";
         const selectedIds = $(".rowCheckbox:checked").map(function () {
             return $(this).data('id');
         }).get();
@@ -311,7 +310,7 @@ const View = {
             `).join('');
 
             $('#deleteSelectedItemDetails').html(detailsHtml);
-            $("#deleteSelectedModalLabel").text(`Confirm Delete Selected (${selectedItems.length} selected)`);
+            $("#deleteSelectedModalLabel").text(`Confirm Delete (${selectedItems.length} selected)`);
             $("#deleteSelectedTotalAmount").text(`Total amount: $${totalAmount.toFixed(2)}`);
             $('#deleteSelectedModal').modal('show');
         } else {
