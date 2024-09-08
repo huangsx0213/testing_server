@@ -79,7 +79,11 @@ const View = {
 
     async handleGoToPage() {
         const pageNumber = parseInt($("#pageInput").val());
-        if (pageNumber >= 1 && pageNumber <= DataLayer.totalPages && pageNumber !== DataLayer.currentPage) {
+        if (pageNumber === DataLayer.currentPage) {
+            return;
+        }
+
+        if (pageNumber >= 1 && pageNumber <= DataLayer.totalPages) {
             DataLayer.currentPage = pageNumber;
             await ViewModel.changePage(pageNumber);
             this.updateTable();
