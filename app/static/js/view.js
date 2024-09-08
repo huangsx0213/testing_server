@@ -22,6 +22,7 @@ const View = {
         $('#confirmDeleteSelected').click(() => this.handleConfirmDeleteSelected());
         $('#setStatusBtn').click(() => this.showStatusChangeModal());
         $('#confirmStatusChange').click(() => this.handleConfirmStatusChange());
+        $('#calculateBtn').click(() => this.handleCalculate());
         $(document).on('change', '#selectAll', () => this.handleSelectAll());
         $(document).on('change', '.rowCheckbox', () => this.handleRowCheckboxChange());
         $(document).on('click', '.edit', (event) => this.handleEdit(event));
@@ -34,7 +35,7 @@ const View = {
                 0: { sorter: false },
                 8: { sorter: false }
             },
-            sortList: [[7,1]],
+            sortList: [[7, 1]],
             widgets: ['zebra'],
             widgetOptions: {
                 zebra: ['even', 'odd'],
@@ -158,7 +159,7 @@ const View = {
     updateFloatingBar() {
         const selectedCheckboxes = $(".rowCheckbox:checked");
         if (selectedCheckboxes.length > 0) {
-            const selectedIds = selectedCheckboxes.map(function() {
+            const selectedIds = selectedCheckboxes.map(function () {
                 return $(this).data('id');
             }).get();
             const selectedItems = DataLayer.transfers.filter(item => selectedIds.includes(item.id));
@@ -256,7 +257,7 @@ const View = {
 
     showStatusChangeModal() {
         const newStatus = $("#setStatusBtn").text() === "Set Active" ? "Active" : "Inactive";
-        const selectedIds = $(".rowCheckbox:checked").map(function() {
+        const selectedIds = $(".rowCheckbox:checked").map(function () {
             return $(this).data('id');
         }).get();
         const selectedItems = DataLayer.transfers.filter(item => selectedIds.includes(item.id));
@@ -269,7 +270,7 @@ const View = {
 
     async handleConfirmStatusChange() {
         const newStatus = $("#statusChangeModalLabel").text() === "Set Active" ? "Active" : "Inactive";
-        const selectedIds = $(".rowCheckbox:checked").map(function() {
+        const selectedIds = $(".rowCheckbox:checked").map(function () {
             return $(this).data('id');
         }).get();
 
@@ -279,7 +280,7 @@ const View = {
     },
 
     showConfirmDeleteSelectedModal() {
-        const selectedIds = $(".rowCheckbox:checked").map(function() {
+        const selectedIds = $(".rowCheckbox:checked").map(function () {
             return $(this).data('id');
         }).get();
 
@@ -297,12 +298,12 @@ const View = {
             $('#deleteSelectedItemDetails').html(detailsHtml);
             $('#deleteSelectedModal').modal('show');
         } else {
-            alert("No items selected for deletion.");
+            console.log("No items selected for deletion.");
         }
     },
 
     async handleConfirmDeleteSelected() {
-        const selectedIds = $(".rowCheckbox:checked").map(function() {
+        const selectedIds = $(".rowCheckbox:checked").map(function () {
             return $(this).data('id');
         }).get();
 
@@ -313,6 +314,17 @@ const View = {
             $('#deleteSelectedModal').modal('hide');
             this.updateTable();
         }
+    },
+
+    async handleCalculate() {
+        const selectedCheckboxes = $(".rowCheckbox:checked");
+        const selectedIds = selectedCheckboxes.map(function () {
+            return $(this).data('id');
+        }).get();
+        const selectedItems = DataLayer.transfers.filter(item => selectedIds.includes(item.id));
+        const totalAmount = this.calculateTotalAmount(selectedItems);
+
+        $("#calculationResult").text(`Total Amount: $${totalAmount.toFixed(2)}`);
     },
 
     calculateTotalAmount(items) {
