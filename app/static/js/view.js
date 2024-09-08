@@ -22,7 +22,7 @@ const View = {
         $('#confirmDeleteSelected').click(() => this.handleConfirmDeleteSelected());
         $('#setStatusBtn').click(() => this.showStatusChangeModal());
         $('#confirmStatusChange').click(() => this.handleConfirmStatusChange());
-        $('#selectAll').change(() => this.handleSelectAll());
+        $(document).on('change', '#selectAll', () => this.handleSelectAll());
         $(document).on('change', '.rowCheckbox', () => this.handleRowCheckboxChange());
         $(document).on('click', '.edit', (event) => this.handleEdit(event));
         $(document).on('click', '.delete', (event) => this.handleDelete(event));
@@ -118,6 +118,9 @@ const View = {
         this.updateTableInfo();
         this.updateFloatingBar();
         $("#dataTable").trigger("update");
+
+        // 重置全选复选框状态
+        $("#selectAll").prop('checked', false);
     },
 
     createTableRow(transfer) {
@@ -320,12 +323,13 @@ const View = {
     },
 
     handleSelectAll() {
-        $(".rowCheckbox").prop('checked', $("#selectAll").prop('checked'));
+        const isChecked = $("#selectAll").prop('checked');
+        $(".rowCheckbox").prop('checked', isChecked);
         this.updateFloatingBar();
     },
 
     handleRowCheckboxChange() {
-        const allChecked = $(".rowCheckbox:not(:checked)").length === 0;
+        const allChecked = $(".rowCheckbox").length === $(".rowCheckbox:checked").length;
         $("#selectAll").prop('checked', allChecked);
         this.updateFloatingBar();
     }
