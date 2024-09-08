@@ -23,6 +23,8 @@ const View = {
         $('#deleteSelectedBtn').click(() => this.handleDeleteSelected());
         $('#selectAll').change(() => this.handleSelectAll());
         $(document).on('change', '.rowCheckbox', () => this.handleRowCheckboxChange());
+        $(document).on('click', '.edit', (event) => this.handleEdit(event));
+        $(document).on('click', '.delete', (event) => this.handleDelete(event));
     },
 
     initializeTable() {
@@ -184,6 +186,22 @@ const View = {
         $('#editModal').modal('show');
     },
 
+    async handleEdit(event) {
+        const id = $(event.currentTarget).data('id');
+        const transfer = DataLayer.transfers.find(t => t.id === id);
+        if (transfer) {
+            $('#editModalLabel').text('Edit Transfer');
+            $('#referenceNo').val(transfer.referenceNo);
+            $('#from').val(transfer.from);
+            $('#to').val(transfer.to);
+            $('#amount').val(transfer.amount);
+            $('#messageType').val(transfer.messageType);
+            $(`input[name="status"][value="${transfer.status}"]`).prop('checked', true);
+            $('#editModal').data('id', id);
+            $('#editModal').modal('show');
+        }
+    },
+
     async handleSaveChanges() {
         const transferData = {
             referenceNo: $('#referenceNo').val(),
@@ -194,8 +212,9 @@ const View = {
             status: $('input[name="status"]:checked').val(),
         };
 
-        if ($('#editModalLabel').text() === 'Edit Transfer') {
-            transferData.id = $('#editForm').data('id');
+        const id = $('#editModal').data('id');
+        if (id) {
+            transferData.id = id;
             await ViewModel.updateTransfer(transferData);
         } else {
             await ViewModel.addNewTransfer(transferData);
@@ -203,6 +222,24 @@ const View = {
 
         $('#editModal').modal('hide');
         this.updateTable();
+    },
+
+    async handleDelete(event) {
+        const id = $(event.currentTarget).data('id');
+        const transfer = DataLayer.transfers.find(t => t.id === id);
+        if (transfer) {
+            $('#deleteModalLabel').text('Confirm Delete');
+            $('#deleteItemDetails').html(`
+                <p><strong>Reference No:</strong> ${transfer.referenceNo}</p>
+                <p><strong>From:</strong> ${transfer.from}</p>
+                <p><strong>To:</strong> ${transfer.to}</p>
+                <p><strong>Amount:</strong> ${transfer.amount}</p>
+                <p><strong>Message Type:</strong> ${transfer.messageType}</p>
+                <p><strong>Status:</strong> ${transfer.status}</p>
+            `);
+            $('#deleteModal').data('id', id);
+            $('#deleteModal').modal('show');
+        }
     },
 
     async handleConfirmDelete() {
