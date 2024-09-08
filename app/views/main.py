@@ -29,7 +29,7 @@ def handle_data():
 @main.route('/api/summary', methods=['POST'])
 def get_summary():
     transfers = TransferService.load_data()
-    summary = TransferService.get_summary(transfers)
+    summary = TransferService.get_summary()
     return jsonify(summary)
 
 @main.route('/api/add_item', methods=['POST'])

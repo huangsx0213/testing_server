@@ -11,7 +11,7 @@ const ViewModel = {
     async changePage(newPage) {
         if (newPage !== DataLayer.currentPage) {
             DataLayer.currentPage = newPage;
-            await Service.loadData();
+            await Service.loadData({ page: newPage });
         }
     },
 

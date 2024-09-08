@@ -69,8 +69,9 @@ class TransferService:
                 return False
         return True
 
-    @staticmethod
-    def get_summary(transfers):
+    @classmethod
+    def get_summary(cls):
+        transfers = cls.load_data()
         total_amount = sum(float(t.amount.replace('$', '').replace(',', '')) for t in transfers)
         total_count = len(transfers)
         active_transfers = [t for t in transfers if t.status == 'Active']
@@ -87,9 +88,9 @@ class TransferService:
             'inactiveCount': len(inactive_transfers)
         }
 
-    @staticmethod
-    def add_transfer(transfer_data):
-        transfers = TransferService.load_data()
+    @classmethod
+    def add_transfer(cls, transfer_data):
+        transfers = cls.load_data()
         new_id = max([t.id for t in transfers] + [0]) + 1
         new_transfer = Transfer(
             id=new_id,
@@ -102,12 +103,12 @@ class TransferService:
             last_update=datetime.now()
         )
         transfers.append(new_transfer)
-        TransferService.save_data(transfers)
+        cls.save_data(transfers)
         return new_transfer
 
-    @staticmethod
-    def update_transfer(transfer_id, transfer_data):
-        transfers = TransferService.load_data()
+    @classmethod
+    def update_transfer(cls, transfer_id, transfer_data):
+        transfers = cls.load_data()
         for i, transfer in enumerate(transfers):
             if transfer.id == transfer_id:
                 transfers[i] = Transfer(
@@ -120,21 +121,21 @@ class TransferService:
                     status=transfer_data['status'],
                     last_update=datetime.now()
                 )
-                TransferService.save_data(transfers)
+                cls.save_data(transfers)
                 return transfers[i]
         return None
 
-    @staticmethod
-    def delete_transfer(transfer_id):
-        transfers = TransferService.load_data()
+    @classmethod
+    def delete_transfer(cls, transfer_id):
+        transfers = cls.load_data()
         transfers = [t for t in transfers if t.id != transfer_id]
-        TransferService.save_data(transfers)
+        cls.save_data(transfers)
 
-    @staticmethod
-    def bulk_update_status(ids, status):
-        transfers = TransferService.load_data()
+    @classmethod
+    def bulk_update_status(cls, ids, status):
+        transfers = cls.load_data()
         for transfer in transfers:
             if transfer.id in ids:
                 transfer.status = status
                 transfer.last_update = datetime.now()
-        TransferService.save_data(transfers)
+        cls.save_data(transfers)
