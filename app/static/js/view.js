@@ -1,4 +1,3 @@
-// view.js
 import ViewModel from './viewmodel.js';
 import DataLayer from './data.js';
 

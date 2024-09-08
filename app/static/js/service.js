@@ -1,4 +1,3 @@
-// service.js
 import DataLayer from './data.js';
 
 const Service = {

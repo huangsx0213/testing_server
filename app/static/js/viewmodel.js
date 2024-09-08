@@ -1,4 +1,3 @@
-// viewmodel.js
 import DataLayer from './data.js';
 import Service from './service.js';
 
