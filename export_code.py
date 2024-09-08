@@ -31,7 +31,7 @@ if __name__ == '__main__':
     extensions = ('.py', '.json', '.xml', '.yaml', '.html'
                   , '.md','.css', '.js'
                   )
-    exclude_directories = {'venv', '.idea', '__pycache__', '.git', 'testing_server', 'report'}
+    exclude_directories = {'venv', '.idea', '__pycache__', '.git', 'report'}
 
     # Listing the files
     files = list_files(directory_to_search, extensions, exclude_directories, exclude_scripts)
