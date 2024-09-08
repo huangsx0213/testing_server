@@ -59,21 +59,24 @@ const View = {
 
     async handlePrevPage() {
         if (DataLayer.currentPage > 1) {
-            await ViewModel.changePage(DataLayer.currentPage - 1);
+            DataLayer.currentPage--;
+            await ViewModel.changePage(DataLayer.currentPage);
             this.updateTable();
         }
     },
 
     async handleNextPage() {
         if (DataLayer.currentPage < DataLayer.totalPages) {
-            await ViewModel.changePage(DataLayer.currentPage + 1);
+            DataLayer.currentPage++;
+            await ViewModel.changePage(DataLayer.currentPage);
             this.updateTable();
         }
     },
 
     async handleGoToPage() {
         const pageNumber = parseInt($("#pageInput").val());
-        if (pageNumber >= 1 && pageNumber <= DataLayer.totalPages) {
+        if (pageNumber >= 1 && pageNumber <= DataLayer.totalPages && pageNumber !== DataLayer.currentPage) {
+            DataLayer.currentPage = pageNumber;
             await ViewModel.changePage(pageNumber);
             this.updateTable();
         } else {
@@ -86,8 +89,10 @@ const View = {
         if (sortList.length > 0) {
             const column = this.getColumnName(sortList[0][0]);
             const order = sortList[0][1] === 0 ? 'asc' : 'desc';
-            await ViewModel.changeSort(column, order);
-            this.updateTable();
+            if (column !== DataLayer.currentSortColumn || order !== DataLayer.currentSortOrder) {
+                await ViewModel.changeSort(column, order);
+                this.updateTable();
+            }
         }
     },
 

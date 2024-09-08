@@ -9,14 +9,18 @@ const ViewModel = {
     },
 
     async changePage(newPage) {
-        DataLayer.currentPage = newPage;
-        await Service.loadData();
+        if (newPage !== DataLayer.currentPage) {
+            DataLayer.currentPage = newPage;
+            await Service.loadData();
+        }
     },
 
     async changeSort(column, order) {
-        DataLayer.currentSortColumn = column;
-        DataLayer.currentSortOrder = order;
-        await Service.loadData();
+        if (column !== DataLayer.currentSortColumn || order !== DataLayer.currentSortOrder) {
+            DataLayer.currentSortColumn = column;
+            DataLayer.currentSortOrder = order;
+            await Service.loadData();
+        }
     },
 
     async addNewTransfer(transfer) {
