@@ -80,6 +80,7 @@ const View = {
     async handleGoToPage() {
         const pageNumber = parseInt($("#pageInput").val());
         if (pageNumber === DataLayer.currentPage) {
+            // 页码相同, 不做任何操作
             return;
         }
 
@@ -192,6 +193,13 @@ const View = {
     showAddModal() {
         $('#editModalLabel').text('Add New Transfer');
         $('#editForm')[0].reset();
+
+        const maxReferenceNo = Math.max(...DataLayer.transfers.map(t => parseInt(t.referenceNo.replace('REF', ''))));
+        const newReferenceNo = `REF${String(maxReferenceNo + 1).padStart(4, '0')}`;
+
+        $('#referenceNo').val(newReferenceNo);
+        $('#statusActive').prop('checked', true);
+
         $('#editModal').data('id', null);
         $('#editModal').modal('show');
     },
@@ -261,19 +269,20 @@ const View = {
 
     showStatusChangeModal() {
         const newStatus = $("#setStatusBtn").text() === "Set Active" ? "Active" : "Inactive";
-        const selectedIds = $(".rowCheckbox:checked").map(function () {
+        const selectedCheckboxes = $(".rowCheckbox:checked");
+        const selectedIds = selectedCheckboxes.map(function () {
             return $(this).data('id');
         }).get();
         const selectedItems = DataLayer.transfers.filter(item => selectedIds.includes(item.id));
         const totalAmount = this.calculateTotalAmount(selectedItems);
 
         $("#selectedAmount").text(`$${totalAmount.toFixed(2)}`);
-        $("#statusChangeModalLabel").text($("#setStatusBtn").text());
+        $("#statusChangeModalLabel").text(`${$("#setStatusBtn").text()} (${selectedItems.length} selected)`);
         $("#statusChangeModal").modal('show');
     },
 
     async handleConfirmStatusChange() {
-        const newStatus = $("#statusChangeModalLabel").text() === "Set Active" ? "Active" : "Inactive";
+        const newStatus = $("#statusChangeModalLabel").text().split(' ')[0] === "Set" ? "Active" : "Inactive";
         const selectedIds = $(".rowCheckbox:checked").map(function () {
             return $(this).data('id');
         }).get();
@@ -284,12 +293,14 @@ const View = {
     },
 
     showConfirmDeleteSelectedModal() {
-        const selectedIds = $(".rowCheckbox:checked").map(function () {
+        const selectedCheckboxes = $(".rowCheckbox:checked");
+        const selectedIds = selectedCheckboxes.map(function () {
             return $(this).data('id');
         }).get();
+        const selectedItems = DataLayer.transfers.filter(item => selectedIds.includes(item.id));
+        const totalAmount = this.calculateTotalAmount(selectedItems);
 
         if (selectedIds.length > 0) {
-            const selectedItems = DataLayer.transfers.filter(item => selectedIds.includes(item.id));
             let detailsHtml = selectedItems.map(item => `
                 <p>
                     <strong>Transfer:</strong> ${item.referenceNo},
@@ -300,6 +311,8 @@ const View = {
             `).join('');
 
             $('#deleteSelectedItemDetails').html(detailsHtml);
+            $("#deleteSelectedModalLabel").text(`Confirm Delete Selected (${selectedItems.length} selected)`);
+            $("#deleteSelectedTotalAmount").text(`Total amount: $${totalAmount.toFixed(2)}`);
             $('#deleteSelectedModal').modal('show');
         } else {
             console.log("No items selected for deletion.");
