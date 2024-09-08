@@ -5,8 +5,8 @@ const View = {
     async init() {
         this.bindEvents();
         this.initializeTable();
-        await ViewModel.refreshData();  // 确保初始调用并等待数据加载
-        this.updateTable();  // 更新表格
+        await ViewModel.refreshData();
+        this.updateTable();
     },
 
     bindEvents() {
@@ -18,9 +18,10 @@ const View = {
         $('#addNewBtn').click(() => this.showAddModal());
         $('#saveChanges').click(() => this.handleSaveChanges());
         $('#confirmDelete').click(() => this.handleConfirmDelete());
+        $('#deleteSelectedBtn').click(() => this.showConfirmDeleteSelectedModal());
+        $('#confirmDeleteSelected').click(() => this.handleConfirmDeleteSelected());
         $('#setStatusBtn').click(() => this.showStatusChangeModal());
         $('#confirmStatusChange').click(() => this.handleConfirmStatusChange());
-        $('#deleteSelectedBtn').click(() => this.handleDeleteSelected());
         $('#selectAll').change(() => this.handleSelectAll());
         $(document).on('change', '.rowCheckbox', () => this.handleRowCheckboxChange());
         $(document).on('click', '.edit', (event) => this.handleEdit(event));
@@ -183,23 +184,8 @@ const View = {
     showAddModal() {
         $('#editModalLabel').text('Add New Transfer');
         $('#editForm')[0].reset();
+        $('#editModal').data('id', null);
         $('#editModal').modal('show');
-    },
-
-    async handleEdit(event) {
-        const id = $(event.currentTarget).data('id');
-        const transfer = DataLayer.transfers.find(t => t.id === id);
-        if (transfer) {
-            $('#editModalLabel').text('Edit Transfer');
-            $('#referenceNo').val(transfer.referenceNo);
-            $('#from').val(transfer.from);
-            $('#to').val(transfer.to);
-            $('#amount').val(transfer.amount);
-            $('#messageType').val(transfer.messageType);
-            $(`input[name="status"][value="${transfer.status}"]`).prop('checked', true);
-            $('#editModal').data('id', id);
-            $('#editModal').modal('show');
-        }
     },
 
     async handleSaveChanges() {
@@ -222,6 +208,22 @@ const View = {
 
         $('#editModal').modal('hide');
         this.updateTable();
+    },
+
+    async handleEdit(event) {
+        const id = $(event.currentTarget).data('id');
+        const transfer = DataLayer.transfers.find(t => t.id === id);
+        if (transfer) {
+            $('#editModalLabel').text('Edit Transfer');
+            $('#referenceNo').val(transfer.referenceNo);
+            $('#from').val(transfer.from);
+            $('#to').val(transfer.to);
+            $('#amount').val(transfer.amount);
+            $('#messageType').val(transfer.messageType);
+            $(`input[name="status"][value="${transfer.status}"]`).prop('checked', true);
+            $('#editModal').data('id', id);
+            $('#editModal').modal('show');
+        }
     },
 
     async handleDelete(event) {
@@ -273,6 +275,43 @@ const View = {
         this.updateTable();
     },
 
+    showConfirmDeleteSelectedModal() {
+        const selectedIds = $(".rowCheckbox:checked").map(function() {
+            return $(this).data('id');
+        }).get();
+
+        if (selectedIds.length > 0) {
+            const selectedItems = DataLayer.transfers.filter(item => selectedIds.includes(item.id));
+            let detailsHtml = selectedItems.map(item => `
+                <p>
+                    <strong>Transfer:</strong> ${item.referenceNo},
+                    <strong>${item.from} → ${item.to}</strong>,
+                    <strong>Amt:</strong> ${item.amount},
+                    <strong>Type:</strong> ${item.messageType}
+                </p>
+            `).join('');
+
+            $('#deleteSelectedItemDetails').html(detailsHtml);
+            $('#deleteSelectedModal').modal('show');
+        } else {
+            alert("No items selected for deletion.");
+        }
+    },
+
+    async handleConfirmDeleteSelected() {
+        const selectedIds = $(".rowCheckbox:checked").map(function() {
+            return $(this).data('id');
+        }).get();
+
+        if (selectedIds.length > 0) {
+            for (const id of selectedIds) {
+                await ViewModel.deleteTransfer(id);
+            }
+            $('#deleteSelectedModal').modal('hide');
+            this.updateTable();
+        }
+    },
+
     calculateTotalAmount(items) {
         return items.reduce((sum, item) => {
             const amount = parseFloat(item.amount.replace('$', '').replace(',', ''));
@@ -289,22 +328,6 @@ const View = {
         const allChecked = $(".rowCheckbox:not(:checked)").length === 0;
         $("#selectAll").prop('checked', allChecked);
         this.updateFloatingBar();
-    },
-
-    async handleDeleteSelected() {
-        const selectedIds = $(".rowCheckbox:checked").map(function() {
-            return $(this).data('id');
-        }).get();
-
-        if (selectedIds.length > 0) {
-            const confirmDelete = confirm(`Are you sure you want to delete ${selectedIds.length} selected transfer(s)?`);
-            if (confirmDelete) {
-                for (const id of selectedIds) {
-                    await ViewModel.deleteTransfer(id);
-                }
-                this.updateTable();
-            }
-        }
     }
 };
 
