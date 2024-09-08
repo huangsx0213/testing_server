@@ -11,6 +11,8 @@ const ViewModel = {
         if (newPage !== DataLayer.currentPage) {
             DataLayer.currentPage = newPage;
             await Service.loadData({ page: newPage });
+        } else {
+            await Service.loadData({ page: DataLayer.currentPage });
         }
     },
 
