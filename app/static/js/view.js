@@ -2,10 +2,11 @@ import ViewModel from './viewmodel.js';
 import DataLayer from './data.js';
 
 const View = {
-    init() {
+    async init() {
         this.bindEvents();
         this.initializeTable();
-        ViewModel.refreshData();  // 确保初始调用
+        await ViewModel.refreshData();  // 确保初始调用并等待数据加载
+        this.updateTable();  // 更新表格
     },
 
     bindEvents() {
