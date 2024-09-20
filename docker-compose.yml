@@ -1,11 +1,15 @@
-version: '3.9'
+version: '3'
 
 services:
   web:
     build: .
     ports:
       - "8088:8088"
+    container_name: flask
     volumes:
       - .:/app
-    environment:
-      - FLASK_ENV=production
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: "512M"
