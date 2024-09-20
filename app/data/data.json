@@ -7,8 +7,8 @@
       "to": "CCBA",
       "amount": "$80.00",
       "messageType": "pacs.008",
-      "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "status": "Inactive",
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 2,
@@ -17,8 +17,8 @@
       "to": "BOC",
       "amount": "$120.50",
       "messageType": "pacs.009",
-      "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "status": "Inactive",
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 3,
@@ -27,8 +27,8 @@
       "to": "CCB",
       "amount": "$95.75",
       "messageType": "pacs.008",
-      "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "status": "Inactive",
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 4,
@@ -37,8 +37,8 @@
       "to": "SPDB",
       "amount": "$150.00",
       "messageType": "pacs.009",
-      "status": "Active",
-      "lastUpdate": "2023-05-07T14:45:00Z"
+      "status": "Inactive",
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 5,
@@ -47,8 +47,8 @@
       "to": "CITIC",
       "amount": "$200.25",
       "messageType": "pacs.008",
-      "status": "Active",
-      "lastUpdate": "2023-05-08T10:20:00Z"
+      "status": "Inactive",
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 6,
@@ -58,7 +58,7 @@
       "amount": "$75.50",
       "messageType": "pacs.009",
       "status": "Inactive",
-      "lastUpdate": "2023-05-09T13:40:00Z"
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 7,
@@ -67,8 +67,8 @@
       "to": "CIB",
       "amount": "$180.00",
       "messageType": "pacs.008",
-      "status": "Active",
-      "lastUpdate": "2023-05-10T15:55:00Z"
+      "status": "Inactive",
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 8,
@@ -77,8 +77,8 @@
       "to": "PSBC",
       "amount": "$110.75",
       "messageType": "pacs.009",
-      "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "status": "Inactive",
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 9,
@@ -88,7 +88,7 @@
       "amount": "$90.25",
       "messageType": "pacs.008",
       "status": "Inactive",
-      "lastUpdate": "2023-05-12T12:15:00Z"
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 10,
@@ -97,8 +97,8 @@
       "to": "ABC",
       "amount": "$135.00",
       "messageType": "pacs.009",
-      "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "status": "Inactive",
+      "lastUpdate": "2024-09-08T22:26:15.333996Z"
     },
     {
       "id": 11,
@@ -128,7 +128,7 @@
       "amount": "$185.75",
       "messageType": "pacs.008",
       "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "lastUpdate": "2024-09-08T22:16:35.078541Z"
     },
     {
       "id": 14,
@@ -138,7 +138,7 @@
       "amount": "$100.00",
       "messageType": "pacs.009",
       "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "lastUpdate": "2024-09-08T22:16:35.078541Z"
     },
     {
       "id": 15,
@@ -148,7 +148,7 @@
       "amount": "$140.25",
       "messageType": "pacs.008",
       "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "lastUpdate": "2024-09-08T22:16:35.078541Z"
     },
     {
       "id": 16,
@@ -158,7 +158,7 @@
       "amount": "$95.50",
       "messageType": "pacs.009",
       "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "lastUpdate": "2024-09-08T22:16:35.078541Z"
     },
     {
       "id": 17,
@@ -168,7 +168,7 @@
       "amount": "$175.00",
       "messageType": "pacs.008",
       "status": "Active",
-      "lastUpdate": "2024-09-08T20:23:41.886876Z"
+      "lastUpdate": "2024-09-08T22:16:35.078541Z"
     },
     {
       "id": 18,
