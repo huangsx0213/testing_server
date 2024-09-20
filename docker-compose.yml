@@ -2,12 +2,12 @@ version: '3'
 
 services:
   web:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - "8088:8088"
-    container_name: flask
-    volumes:
-      - .:/app
+    container_name: myapp
     deploy:
       resources:
         limits:
