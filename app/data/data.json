@@ -5,7 +5,7 @@
       "referenceNo": "REF0001",
       "from": "ICBC",
       "to": "CCBA",
-      "amount": "$80.00",
+      "amount": "80.00",
       "messageType": "pacs.008",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -15,7 +15,7 @@
       "referenceNo": "REF0002",
       "from": "ABC",
       "to": "BOC",
-      "amount": "$120.50",
+      "amount": "120.50",
       "messageType": "pacs.009",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -25,7 +25,7 @@
       "referenceNo": "REF0003",
       "from": "BOCOM",
       "to": "CCB",
-      "amount": "$95.75",
+      "amount": "95.75",
       "messageType": "pacs.008",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -35,7 +35,7 @@
       "referenceNo": "REF0004",
       "from": "CMB",
       "to": "SPDB",
-      "amount": "$150.00",
+      "amount": "150.00",
       "messageType": "pacs.009",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -45,7 +45,7 @@
       "referenceNo": "REF0005",
       "from": "CEB",
       "to": "CITIC",
-      "amount": "$200.25",
+      "amount": "200.25",
       "messageType": "pacs.008",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -55,7 +55,7 @@
       "referenceNo": "REF0006",
       "from": "HXB",
       "to": "CMBC",
-      "amount": "$75.50",
+      "amount": "75.50",
       "messageType": "pacs.009",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -65,7 +65,7 @@
       "referenceNo": "REF0007",
       "from": "PAB",
       "to": "CIB",
-      "amount": "$180.00",
+      "amount": "180.00",
       "messageType": "pacs.008",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -75,7 +75,7 @@
       "referenceNo": "REF0008",
       "from": "BOS",
       "to": "PSBC",
-      "amount": "$110.75",
+      "amount": "110.75",
       "messageType": "pacs.009",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -85,7 +85,7 @@
       "referenceNo": "REF0009",
       "from": "CCBA",
       "to": "ICBC",
-      "amount": "$90.25",
+      "amount": "90.25",
       "messageType": "pacs.008",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -95,7 +95,7 @@
       "referenceNo": "REF0010",
       "from": "BOC",
       "to": "ABC",
-      "amount": "$135.00",
+      "amount": "135.00",
       "messageType": "pacs.009",
       "status": "Inactive",
       "lastUpdate": "2024-09-08T22:26:15.333996Z"
@@ -105,7 +105,7 @@
       "referenceNo": "REF0011",
       "from": "CCB",
       "to": "BOCOM",
-      "amount": "$160.50",
+      "amount": "160.50",
       "messageType": "pacs.008",
       "status": "Active",
       "lastUpdate": "2023-05-14T09:05:00Z"
@@ -115,7 +115,7 @@
       "referenceNo": "REF0012",
       "from": "SPDB",
       "to": "CMB",
-      "amount": "$70.25",
+      "amount": "70.25",
       "messageType": "pacs.009",
       "status": "Inactive",
       "lastUpdate": "2023-05-15T11:25:00Z"
@@ -125,7 +125,7 @@
       "referenceNo": "REF0013",
       "from": "CITIC",
       "to": "CEB",
-      "amount": "$185.75",
+      "amount": "185.75",
       "messageType": "pacs.008",
       "status": "Active",
       "lastUpdate": "2024-09-08T22:16:35.078541Z"
@@ -135,7 +135,7 @@
       "referenceNo": "REF0014",
       "from": "CMBC",
       "to": "HXB",
-      "amount": "$100.00",
+      "amount": "100.00",
       "messageType": "pacs.009",
       "status": "Active",
       "lastUpdate": "2024-09-08T22:16:35.078541Z"
@@ -145,7 +145,7 @@
       "referenceNo": "REF0015",
       "from": "CIB",
       "to": "PAB",
-      "amount": "$140.25",
+      "amount": "140.25",
       "messageType": "pacs.008",
       "status": "Active",
       "lastUpdate": "2024-09-08T22:16:35.078541Z"
@@ -155,7 +155,7 @@
       "referenceNo": "REF0016",
       "from": "PSBC",
       "to": "BOS",
-      "amount": "$95.50",
+      "amount": "95.50",
       "messageType": "pacs.009",
       "status": "Active",
       "lastUpdate": "2024-09-08T22:16:35.078541Z"
@@ -165,7 +165,7 @@
       "referenceNo": "REF0017",
       "from": "ICBC",
       "to": "CCBA",
-      "amount": "$175.00",
+      "amount": "175.00",
       "messageType": "pacs.008",
       "status": "Active",
       "lastUpdate": "2024-09-08T22:16:35.078541Z"
@@ -175,7 +175,7 @@
       "referenceNo": "REF0018",
       "from": "ABC",
       "to": "BOC",
-      "amount": "$130.75",
+      "amount": "130.75",
       "messageType": "pacs.009",
       "status": "Active",
       "lastUpdate": "2024-09-08T20:17:31.690692Z"
