@@ -5,9 +5,13 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-#    ports:
-#      - "8088:8088"
-    container_name: myapp
+    container_name: dsb-1.0
+    network_mode: host
+    restart: unless-stopped
+    logging:
+        driver: "json-file"
+        options:
+            max-size: "10M"
     deploy:
       resources:
         limits:
