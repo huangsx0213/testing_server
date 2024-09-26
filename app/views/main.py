@@ -1,56 +1,107 @@
-from flask import Blueprint, render_template, jsonify, request
+from flask import Blueprint, render_template, jsonify, request, Response
 from ..services.transfer_service import TransferService
+import xml.etree.ElementTree as ET
+from functools import wraps
 
 main = Blueprint('main', __name__)
+
+
+def support_xml_response(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        result = f(*args, **kwargs)
+
+        if request.headers.get('Accept') == 'application/xml':
+            # Convert result to XML
+            root = ET.Element('response')
+
+            def dict_to_xml(tag, d):
+                elem = ET.Element(tag)
+                for key, val in d.items():
+                    child = ET.Element(key)
+                    if isinstance(val, dict):
+                        child = dict_to_xml(key, val)
+                    elif isinstance(val, list):
+                        for item in val:
+                            if isinstance(item, dict):
+                                child.append(dict_to_xml('item', item))
+                            else:
+                                ET.SubElement(child, 'item').text = str(item)
+                    else:
+                        child.text = str(val)
+                    elem.append(child)
+                return elem
+
+            root = dict_to_xml('response', result)
+            xml_string = ET.tostring(root, encoding='unicode')
+            return Response(xml_string, mimetype='application/xml')
+        else:
+            # Return JSON response
+            return jsonify(result)
+
+    return decorated_function
+
 
 @main.route('/')
 def index():
     return render_template('table.html')
 
+
 @main.route('/api/data', methods=['POST'])
+@support_xml_response
 def handle_data():
     if not request.json or 'action' not in request.json:
-        return jsonify({"error": "Invalid request format"}), 400
+        return {"error": "Invalid request format"}, 400
 
     action = request.json['action']
 
     if action == 'get':
         transfers = TransferService.load_data()
         filtered_data = TransferService.filter_sort_paginate(transfers, request.json)
-        return jsonify(filtered_data)
+        return filtered_data
     elif action == 'delete':
         if 'id' not in request.json:
-            return jsonify({"error": "No id provided for deletion"}), 400
+            return {"error": "No id provided for deletion"}, 400
         TransferService.delete_transfer(request.json['id'])
-        return jsonify({"message": "Item deleted successfully"}), 200
+        return {"message": "Item deleted successfully"}, 200
     else:
-        return jsonify({"error": "Invalid action"}), 400
+        return {"error": "Invalid action"}, 400
+
 
 @main.route('/api/summary', methods=['POST'])
+@support_xml_response
 def get_summary():
     transfers = TransferService.load_data()
     summary = TransferService.get_summary()
-    return jsonify(summary)
+    return summary
+
 
 @main.route('/api/add_item', methods=['POST'])
+@support_xml_response
 def add_item():
     new_transfer = TransferService.add_transfer(request.json)
-    return jsonify({"message": "Item added successfully", "item": new_transfer.to_dict()}), 201
+    return {"message": "Item added successfully", "item": new_transfer.to_dict()}, 201
+
 
 @main.route('/api/update_item/<int:item_id>', methods=['PUT'])
+@support_xml_response
 def update_item(item_id):
     updated_transfer = TransferService.update_transfer(item_id, request.json)
     if updated_transfer:
-        return jsonify({"message": "Item updated successfully", "item": updated_transfer.to_dict()}), 200
-    return jsonify({"message": "Item not found"}), 404
+        return {"message": "Item updated successfully", "item": updated_transfer.to_dict()}, 200
+    return {"message": "Item not found"}, 404
+
 
 @main.route('/api/delete_item/<int:item_id>', methods=['DELETE'])
+@support_xml_response
 def delete_item(item_id):
     TransferService.delete_transfer(item_id)
-    return jsonify({"message": "Item deleted successfully"}), 200
+    return {"message": "Item deleted successfully"}, 200
+
 
 @main.route('/api/bulk_update', methods=['POST'])
+@support_xml_response
 def bulk_update():
     update_data = request.json
     TransferService.bulk_update_status(update_data['ids'], update_data['status'])
-    return jsonify({"message": "Bulk update successful"}), 200
+    return {"message": "Bulk update successful"}, 200
