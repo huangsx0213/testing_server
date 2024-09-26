@@ -18,18 +18,22 @@ def support_xml_response(f):
             def dict_to_xml(tag, d):
                 elem = ET.Element(tag)
                 for key, val in d.items():
-                    child = ET.Element(key)
                     if isinstance(val, dict):
                         child = dict_to_xml(key, val)
+                        elem.append(child)
                     elif isinstance(val, list):
                         for item in val:
                             if isinstance(item, dict):
-                                child.append(dict_to_xml('item', item))
+                                child = dict_to_xml(key, item)
+                                elem.append(child)
                             else:
-                                ET.SubElement(child, 'item').text = str(item)
+                                child = ET.Element(key)
+                                child.text = str(item)
+                                elem.append(child)
                     else:
+                        child = ET.Element(key)
                         child.text = str(val)
-                    elem.append(child)
+                        elem.append(child)
                 return elem
 
             root = dict_to_xml('response', result)
