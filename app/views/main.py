@@ -55,7 +55,7 @@ def index():
 @support_xml_response
 def handle_data():
     if not request.json or 'action' not in request.json:
-        return {"error": "Invalid request format"}, 400
+        return {"error": "Invalid request format"}
 
     action = request.json['action']
 
@@ -65,11 +65,11 @@ def handle_data():
         return filtered_data
     elif action == 'delete':
         if 'id' not in request.json:
-            return {"error": "No id provided for deletion"}, 400
+            return {"error": "No id provided for deletion"}
         TransferService.delete_transfer(request.json['id'])
-        return {"message": "Item deleted successfully"}, 200
+        return {"message": "Item deleted successfully"}
     else:
-        return {"error": "Invalid action"}, 400
+        return {"error": "Invalid action"}
 
 
 @main.route('/api/summary', methods=['POST'])
@@ -84,7 +84,7 @@ def get_summary():
 @support_xml_response
 def add_item():
     new_transfer = TransferService.add_transfer(request.json)
-    return {"message": "Item added successfully", "item": new_transfer.to_dict()}, 201
+    return {"message": "Item added successfully", "item": new_transfer.to_dict()}
 
 
 @main.route('/api/update_item/<int:item_id>', methods=['PUT'])
@@ -92,15 +92,15 @@ def add_item():
 def update_item(item_id):
     updated_transfer = TransferService.update_transfer(item_id, request.json)
     if updated_transfer:
-        return {"message": "Item updated successfully", "item": updated_transfer.to_dict()}, 200
-    return {"message": "Item not found"}, 404
+        return {"message": "Item updated successfully", "item": updated_transfer.to_dict()}
+    return {"message": "Item not found"}
 
 
 @main.route('/api/delete_item/<int:item_id>', methods=['DELETE'])
 @support_xml_response
 def delete_item(item_id):
     TransferService.delete_transfer(item_id)
-    return {"message": "Item deleted successfully"}, 200
+    return {"message": "Item deleted successfully"}
 
 
 @main.route('/api/bulk_update', methods=['POST'])
@@ -108,4 +108,4 @@ def delete_item(item_id):
 def bulk_update():
     update_data = request.json
     TransferService.bulk_update_status(update_data['ids'], update_data['status'])
-    return {"message": "Bulk update successful"}, 200
+    return {"message": "Bulk update successful"}
