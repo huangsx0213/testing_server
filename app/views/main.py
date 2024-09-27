@@ -5,7 +5,6 @@ from functools import wraps
 
 main = Blueprint('main', __name__)
 
-
 def support_xml_response(f):
     @wraps(f)
     def decorated_function(*args, **kwargs):
@@ -45,11 +44,9 @@ def support_xml_response(f):
 
     return decorated_function
 
-
 @main.route('/')
 def index():
     return render_template('table.html')
-
 
 @main.route('/api/data', methods=['POST'])
 @support_xml_response
@@ -60,8 +57,7 @@ def handle_data():
     action = request.json['action']
 
     if action == 'get':
-        transfers = TransferService.load_data()
-        filtered_data = TransferService.filter_sort_paginate(transfers, request.json)
+        filtered_data = TransferService.filter_sort_paginate(request.json)
         return filtered_data
     elif action == 'delete':
         if 'id' not in request.json:
@@ -71,21 +67,17 @@ def handle_data():
     else:
         return {"error": "Invalid action"}
 
-
 @main.route('/api/summary', methods=['POST'])
 @support_xml_response
 def get_summary():
-    transfers = TransferService.load_data()
     summary = TransferService.get_summary()
     return summary
-
 
 @main.route('/api/add_item', methods=['POST'])
 @support_xml_response
 def add_item():
     new_transfer = TransferService.add_transfer(request.json)
     return {"message": "Item added successfully", "item": new_transfer.to_dict()}
-
 
 @main.route('/api/update_item/<int:item_id>', methods=['PUT'])
 @support_xml_response
@@ -95,13 +87,11 @@ def update_item(item_id):
         return {"message": "Item updated successfully", "item": updated_transfer.to_dict()}
     return {"message": "Item not found"}
 
-
 @main.route('/api/delete_item/<int:item_id>', methods=['DELETE'])
 @support_xml_response
 def delete_item(item_id):
     TransferService.delete_transfer(item_id)
     return {"message": "Item deleted successfully"}
-
 
 @main.route('/api/bulk_update', methods=['POST'])
 @support_xml_response

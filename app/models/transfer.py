@@ -1,41 +1,15 @@
-from dataclasses import dataclass
+from app import db
 from datetime import datetime
 
-@dataclass
-class Transfer:
-    id: int
-    reference_no: str
-    from_bank: str
-    to_bank: str
-    amount: str
-    message_type: str
-    status: str
-    last_update: datetime
-
-    @classmethod
-    def from_dict(cls, data):
-        # 自定义日期解析逻辑
-        def parse_date(date_string):
-            # 移除 'Z' 后缀，如果存在的话
-            date_string = date_string.rstrip('Z')
-            # 如果字符串中包含小数秒，将其规范化为 6 位
-            if '.' in date_string:
-                date_part, time_part = date_string.split('T')
-                time_part, ms_part = time_part.split('.')
-                ms_part = ms_part[:6].ljust(6, '0')
-                date_string = f"{date_part}T{time_part}.{ms_part}"
-            return datetime.fromisoformat(date_string)
-
-        return cls(
-            id=data['id'],
-            reference_no=data['referenceNo'],
-            from_bank=data['from'],
-            to_bank=data['to'],
-            amount=data['amount'],
-            message_type=data['messageType'],
-            status=data['status'],
-            last_update=parse_date(data['lastUpdate'])
-        )
+class Transfer(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    reference_no = db.Column(db.String(64), unique=True, nullable=False)
+    from_bank = db.Column(db.String(64), nullable=False)
+    to_bank = db.Column(db.String(64), nullable=False)
+    amount = db.Column(db.String(64), nullable=False)
+    message_type = db.Column(db.String(64), nullable=False)
+    status = db.Column(db.String(64), nullable=False)
+    last_update = db.Column(db.DateTime, default=datetime.utcnow)
 
     def to_dict(self):
         return {
@@ -48,3 +22,14 @@ class Transfer:
             'status': self.status,
             'lastUpdate': self.last_update.isoformat() + 'Z'
         }
+
+    @classmethod
+    def from_dict(cls, data):
+        return cls(
+            reference_no=data['referenceNo'],
+            from_bank=data['from'],
+            to_bank=data['to'],
+            amount=data['amount'],
+            message_type=data['messageType'],
+            status=data['status']
+        )

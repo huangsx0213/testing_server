@@ -1,141 +1,99 @@
-import json
-from flask import current_app
-from ..models.transfer import Transfer
 from datetime import datetime
+from app import db
+from app.models.transfer import Transfer
+from sqlalchemy import func
 
 class TransferService:
-    @classmethod
-    def load_data(cls):
-        try:
-            with open(current_app.config['JSON_DATA_PATH'], 'r') as f:
-                data = json.load(f)
-                return [Transfer.from_dict(item) for item in data['data']]
-        except FileNotFoundError:
-            return []
+    @staticmethod
+    def load_data():
+        return Transfer.query.all()
 
-    @classmethod
-    def save_data(cls, transfers):
-        data = {'data': [transfer.to_dict() for transfer in transfers]}
-        with open(current_app.config['JSON_DATA_PATH'], 'w') as f:
-            json.dump(data, f, indent=2)
+    @staticmethod
+    def filter_sort_paginate(params):
+        query = Transfer.query
 
-    @classmethod
-    def filter_sort_paginate(cls, transfers, params):
         # Apply filtering
         if 'filter' in params:
-            transfers = [t for t in transfers if cls.apply_filter(t, params['filter'])]
+            filter_params = params['filter']
+            if 'status' in filter_params and filter_params['status']:
+                query = query.filter(Transfer.status == filter_params['status'])
+            if 'minAmount' in filter_params and filter_params['minAmount']:
+                query = query.filter(func.cast(Transfer.amount, db.Float) >= float(filter_params['minAmount']))
+            if 'maxAmount' in filter_params and filter_params['maxAmount']:
+                query = query.filter(func.cast(Transfer.amount, db.Float) <= float(filter_params['maxAmount']))
 
         # Apply sorting
         if 'sort' in params:
-            reverse = params['sort']['order'] == 'desc'
-            field = params['sort']['field']
-            field_mapping = {
-                'referenceNo': 'reference_no',
-                'from': 'from_bank',
-                'to': 'to_bank',
-                'amount': 'amount',
-                'messageType': 'message_type',
-                'status': 'status',
-                'lastUpdate': 'last_update'
-            }
-            transfers.sort(key=lambda x: getattr(x, field_mapping.get(field, field)), reverse=reverse)
-
-        # Calculate pagination
-        page = int(params.get('page', 1))
-        items_per_page = int(params.get('itemsPerPage', 10))
-        total_items = len(transfers)
-        total_pages = (total_items + items_per_page - 1) // items_per_page
+            sort_field = params['sort']['field']
+            sort_order = params['sort']['order']
+            if hasattr(Transfer, sort_field):
+                if sort_order == 'desc':
+                    query = query.order_by(getattr(Transfer, sort_field).desc())
+                else:
+                    query = query.order_by(getattr(Transfer, sort_field))
 
         # Apply pagination
-        start = (page - 1) * items_per_page
-        end = start + items_per_page
-        paginated_data = transfers[start:end]
+        page = int(params.get('page', 1))
+        items_per_page = int(params.get('itemsPerPage', 10))
+        pagination = query.paginate(page=page, per_page=items_per_page, error_out=False)
 
         return {
-            'data': [t.to_dict() for t in paginated_data],
-            'totalItems': total_items,
-            'totalPages': total_pages,
+            'data': [item.to_dict() for item in pagination.items],
+            'totalItems': pagination.total,
+            'totalPages': pagination.pages,
             'currentPage': page
         }
 
-    @classmethod
-    def apply_filter(cls, transfer, filter_params):
-        for key, value in filter_params.items():
-            if key == 'status' and value and transfer.status != value:
-                return False
-            if key == 'minAmount' and value and float(transfer.amount.replace('$', '').replace(',', '')) < float(value):
-                return False
-            if key == 'maxAmount' and value and float(transfer.amount.replace('$', '').replace(',', '')) > float(value):
-                return False
-        return True
-
-    @classmethod
-    def get_summary(cls):
-        transfers = cls.load_data()
-        total_amount = sum(float(t.amount.replace('$', '').replace(',', '')) for t in transfers)
-        total_count = len(transfers)
-        active_transfers = [t for t in transfers if t.status == 'Active']
-        inactive_transfers = [t for t in transfers if t.status == 'Inactive']
-        active_amount = sum(float(t.amount.replace('$', '').replace(',', '')) for t in active_transfers)
-        inactive_amount = sum(float(t.amount.replace('$', '').replace(',', '')) for t in inactive_transfers)
+    @staticmethod
+    def get_summary():
+        total_count = Transfer.query.count()
+        total_amount = db.session.query(func.sum(func.cast(Transfer.amount, db.Float))).scalar() or 0
+        active_transfers = Transfer.query.filter_by(status='Active')
+        inactive_transfers = Transfer.query.filter_by(status='Inactive')
+        active_count = active_transfers.count()
+        inactive_count = inactive_transfers.count()
+        active_amount = active_transfers.with_entities(func.sum(func.cast(Transfer.amount, db.Float))).scalar() or 0
+        inactive_amount = inactive_transfers.with_entities(func.sum(func.cast(Transfer.amount, db.Float))).scalar() or 0
 
         return {
             'totalAmount': round(total_amount, 2),
             'totalCount': total_count,
             'activeAmount': round(active_amount, 2),
             'inactiveAmount': round(inactive_amount, 2),
-            'activeCount': len(active_transfers),
-            'inactiveCount': len(inactive_transfers)
+            'activeCount': active_count,
+            'inactiveCount': inactive_count
         }
 
-    @classmethod
-    def add_transfer(cls, transfer_data):
-        transfers = cls.load_data()
-        new_id = max([t.id for t in transfers] + [0]) + 1
-        new_transfer = Transfer(
-            id=new_id,
-            reference_no=transfer_data['referenceNo'],
-            from_bank=transfer_data['from'],
-            to_bank=transfer_data['to'],
-            amount=transfer_data['amount'],
-            message_type=transfer_data['messageType'],
-            status=transfer_data['status'],
-            last_update=datetime.now()
-        )
-        transfers.append(new_transfer)
-        cls.save_data(transfers)
+    @staticmethod
+    def add_transfer(transfer_data):
+        new_transfer = Transfer.from_dict(transfer_data)
+        db.session.add(new_transfer)
+        db.session.commit()
         return new_transfer
 
-    @classmethod
-    def update_transfer(cls, transfer_id, transfer_data):
-        transfers = cls.load_data()
-        for i, transfer in enumerate(transfers):
-            if transfer.id == transfer_id:
-                transfers[i] = Transfer(
-                    id=transfer_id,
-                    reference_no=transfer_data['referenceNo'],
-                    from_bank=transfer_data['from'],
-                    to_bank=transfer_data['to'],
-                    amount=transfer_data['amount'],
-                    message_type=transfer_data['messageType'],
-                    status=transfer_data['status'],
-                    last_update=datetime.now()
-                )
-                cls.save_data(transfers)
-                return transfers[i]
+    @staticmethod
+    def update_transfer(transfer_id, transfer_data):
+        transfer = Transfer.query.get(transfer_id)
+        if transfer:
+            transfer.reference_no = transfer_data['referenceNo']
+            transfer.from_bank = transfer_data['from']
+            transfer.to_bank = transfer_data['to']
+            transfer.amount = transfer_data['amount']
+            transfer.message_type = transfer_data['messageType']
+            transfer.status = transfer_data['status']
+            transfer.last_update = datetime.utcnow()
+            db.session.commit()
+            return transfer
         return None
 
-    @classmethod
-    def delete_transfer(cls, transfer_id):
-        transfers = cls.load_data()
-        transfers = [t for t in transfers if t.id != transfer_id]
-        cls.save_data(transfers)
+    @staticmethod
+    def delete_transfer(transfer_id):
+        transfer = Transfer.query.get(transfer_id)
+        if transfer:
+            db.session.delete(transfer)
+            db.session.commit()
 
-    @classmethod
-    def bulk_update_status(cls, ids, status):
-        transfers = cls.load_data()
-        for transfer in transfers:
-            if transfer.id in ids:
-                transfer.status = status
-                transfer.last_update = datetime.now()
-        cls.save_data(transfers)
+    @staticmethod
+    def bulk_update_status(ids, status):
+        Transfer.query.filter(Transfer.id.in_(ids)).update({Transfer.status: status}, synchronize_session=False)
+        db.session.commit()
