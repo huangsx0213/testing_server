@@ -99,3 +99,9 @@ def bulk_update():
     update_data = request.json
     TransferService.bulk_update_status(update_data['ids'], update_data['status'])
     return {"message": "Bulk update successful"}
+
+@main.route('/api/get_max_reference_no', methods=['GET'])
+@support_xml_response
+def get_max_reference_no():
+    max_ref = TransferService.get_max_reference_no()
+    return {"maxReferenceNo": max_ref}

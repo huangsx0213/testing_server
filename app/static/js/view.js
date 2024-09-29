@@ -1,5 +1,6 @@
 import ViewModel from './viewmodel.js';
 import DataLayer from './data.js';
+import Service from './service.js';
 
 const View = {
     async init() {
@@ -190,16 +191,19 @@ const View = {
         }
     },
 
-    showAddModal() {
+    async showAddModal() {
         $('#editModalLabel').text('Add New Transfer');
         $('#editForm')[0].reset();
 
-        const maxReferenceNo = Math.max(...DataLayer.transfers.map(t => parseInt(t.referenceNo.replace('REF', ''))));
-        const newReferenceNo = `REF${String(maxReferenceNo + 1).padStart(4, '0')}`;
+        try {
+            const result = await Service.getMaxReferenceNo();
+            $('#referenceNo').val(result.maxReferenceNo);
+        } catch (error) {
+            console.error('Error fetching max reference number:', error);
+            $('#referenceNo').val('');
+        }
 
-        $('#referenceNo').val(newReferenceNo);
         $('#statusActive').prop('checked', true);
-
         $('#editModal').data('id', null);
         $('#editModal').modal('show');
     },

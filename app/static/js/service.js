@@ -81,7 +81,18 @@ const Service = {
 
         return await response.json();
     },
+    async getMaxReferenceNo() {
+        const response = await fetch('/api/get_max_reference_no', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' }
+        });
 
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        return await response.json();
+    },
     async bulkUpdateStatus(ids, status) {
         const response = await fetch('/api/bulk_update', {
             method: 'POST',

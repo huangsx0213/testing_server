@@ -97,3 +97,12 @@ class TransferService:
     def bulk_update_status(ids, status):
         Transfer.query.filter(Transfer.id.in_(ids)).update({Transfer.status: status}, synchronize_session=False)
         db.session.commit()
+
+    @staticmethod
+    def get_max_reference_no():
+        max_ref = db.session.query(func.max(Transfer.reference_no)).scalar()
+        if max_ref:
+            max_num = int(max_ref.replace('REF', ''))
+            return f'REF{str(max_num + 1).zfill(4)}'
+        else:
+            return 'REF0001'
